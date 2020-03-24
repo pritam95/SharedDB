@@ -4,13 +4,14 @@ import eventModule as evnt
 def rootUi(mainWindow):
     print ("Inside:"+__name__)
     fileName=tk.StringVar()
-    createButton(mainWindow,"First",fileName)
-    createLabel(mainWindow,"Enter File Name")
+    createButton(mainWindow,"Create Script",fileName,evnt.createScript)
+    createButton(mainWindow,"Run Upwards",fileName,evnt.runUpward)
+    createLabel(mainWindow,"Enter File Name:")
     createEntry(mainWindow,fileName)
 
 
-def createButton(mainWindow,purpose,fileName):
-    newButton=tk.Button(mainWindow,text=purpose,command=lambda:evnt.createScript(fileName))
+def createButton(mainWindow,purpose,fileName,action):
+    newButton=tk.Button(mainWindow,text=purpose,command=lambda:action(fileName))
     newButton.pack()
 
 def createLabel(mainWindow,purpose):
