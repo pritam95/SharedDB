@@ -1,28 +1,14 @@
 import os
-import timeModule as tm
-import constant
 from tkinter import messagebox
 import subEventModule as subEvt
-import dbModule as dB
 
 def createScript(fileName):
     print("Inside:"+__name__)
-    tStamp=tm.getDate()
     tempName=fileName.get()
     if tempName.find(' ') != -1:
         messagebox.showinfo("Error","Can not contain space in name")
         return
-    fileName=tempName+"_"+tStamp+".txt"
-    fp=None
-    try:
-        fp=open((os.path.join(constant.PATH,fileName)),'a+')
-        print("File Created With Name : "+fileName)
-        fp.write("Test Data")
-    except Exception as e:
-        messagebox.showinfo("Error","Can not create file on specific path: "+str(e))
-    finally:
-        if fp is not None:
-            fp.close()
+    subEvt.createScript(tempName)
 
 def runUpward(fileName):
     scriptNames=[]
@@ -41,10 +27,11 @@ def runUpward(fileName):
         messagebox.showinfo("Error","no scripts found on the specific directory,please check")
         return
     try:
-        if(len(scriptNames)>0):
-            subEvt.insertScripts(scriptNames)
-        allScripts=dB.getAllScriptsFromDB()
-        print("All scripts from db till executed are: "+str(allScripts))        
+        scriptsFromDb=subEvt.getAllScriptsForUp()
+        print("All scripts from Database till executed are: "+str(scriptsFromDb))
+        if(len(scriptsFromDb)>0):
+            scriptsFromDb=subEvt.sortScriptsWithTime(scriptsFromDb)
+        subEvt.runScripts(scriptNames,scriptsFromDb)        
     except Exception as e:
             messagebox.showinfo("Error","runUpward Method:something is worng: "+str(e))
             return

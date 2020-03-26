@@ -44,11 +44,58 @@ def sortScriptsWithTime(scriptNames):
     print("After sorting the order is:"+str(scriptNames))
     return scriptNames
 
-def insertScripts(allScripts):
+def insertScriptsForUp(allScripts):
     tuple=[]
     now=datetime.datetime.now()
     lowDate=tM.getLowDate()
     for script in allScripts:
-        objTuple=(script,0,now,0,lowDate)
+        objTuple=(script,1,now,0,lowDate)
         tuple.append(objTuple)
-    dB.insertScript(tuple)
+    try:
+        dB.insertScript(tuple)
+    except Exception as e:
+        raise
+
+def getAllScriptsForUp():
+    allScriptDict=[]
+    scriptNames=[]
+    try:
+        allScriptDict=dB.getAllScriptsFromDBForUp()
+    except Exception as e:
+        raise
+    for script in allScriptDict:
+        scriptNames.append(script['script_name'])
+    return scriptNames
+
+def runScripts(scriptsFromPath,scriptsFromDB):
+    filterdlist=[]
+    for file in scriptsFromPath:
+        if file not in scriptsFromDB:
+            filterdlist.append(file)
+    print("Not In DB: "+str(filterdlist))
+    insertScriptsForUp(filterdlist)
+
+def createScript(fileName):
+    rootPath=os.path.dirname(os.path.realpath(__file__))
+    templatePath=os.path.join(rootPath,"internal_files")    
+    tStamp=tM.getDate()
+    fileName=fileName+"_"+tStamp+".txt"
+    fp=None
+    fp1=None
+    try:
+        fp1=open((os.path.join(templatePath,constant.TEMPLATE)),'r')
+        content=fp1.read()
+        fp=open((os.path.join(constant.PATH,fileName)),'a+')
+        print("File Created With Name : "+fileName)
+        fp.write(content)
+    except Exception as e:
+        messagebox.showinfo("Error","Can not create file on specific path: "+str(e))
+    finally:
+        if fp1 is not None:
+            fp1.close()
+        if fp is not None:
+            fp.close()    
+
+
+
+

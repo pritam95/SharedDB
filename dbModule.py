@@ -17,12 +17,12 @@ def insertScript(tuple):
         if (connection is not None and connection.is_connected()):
             closeConnection(cursor,connection)
 
-def getAllScriptsFromDB():
+def getAllScriptsFromDBForUp():
     allScripts=[]
     try:
         connection = mysql.connector.connect(host=constant.HOST,database=constant.DATABASE,user=constant.USER,password=constant.PASSWORD)
         cursor = connection.cursor(dictionary=True) #this will return MySQLCursorPrepared object
-        query = "SELECT * FROM db_control"
+        query = "SELECT * FROM db_control d WHERE d.run_up_flag=1"
         cursor.execute(query)
         allScripts=cursor.fetchall()
     except Exception as e:
