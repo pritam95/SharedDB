@@ -1,6 +1,9 @@
 import os
 import constant
 from tkinter import messagebox
+import dbModule as dB
+import timeModule as tM
+import datetime
 
 def findScripts():
     scriptNames=[]
@@ -40,3 +43,12 @@ def sortScriptsWithTime(scriptNames):
         raise
     print("After sorting the order is:"+str(scriptNames))
     return scriptNames
+
+def insertScripts(allScripts):
+    tuple=[]
+    now=datetime.datetime.now()
+    lowDate=tM.getLowDate()
+    for script in allScripts:
+        objTuple=(script,0,now,0,lowDate)
+        tuple.append(objTuple)
+    dB.insertScript(tuple)

@@ -3,6 +3,7 @@ import timeModule as tm
 import constant
 from tkinter import messagebox
 import subEventModule as subEvt
+import dbModule as dB
 
 def createScript(fileName):
     print("Inside:"+__name__)
@@ -34,6 +35,17 @@ def runUpward(fileName):
         try:
             scriptNames=subEvt.sortScriptsWithTime(scriptNames)
         except Exception as e:
+            messagebox.showinfo("Error","runUpward Method:something is worng: "+str(e))
+            return
+    else:
+        messagebox.showinfo("Error","no scripts found on the specific directory,please check")
+        return
+    try:
+        if(len(scriptNames)>0):
+            subEvt.insertScripts(scriptNames)
+        allScripts=dB.getAllScriptsFromDB()
+        print("All scripts from db till executed are: "+str(allScripts))        
+    except Exception as e:
             messagebox.showinfo("Error","runUpward Method:something is worng: "+str(e))
             return
 
