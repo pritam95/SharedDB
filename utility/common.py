@@ -1,6 +1,9 @@
 import os
 import importlib
 import sys
+from tkinter import messagebox
+import re
+import constant
 
 def getSqlFromModule(script):
     moduleName=os.path.splitext(script)[0]
@@ -20,4 +23,18 @@ def createDictionary(cursor):
         for i in range(0,noOfCol,1):
             dict[columnNames[i]]=result[i]
         list.append(dict)
-    print(list)     
+    print(list)
+
+def nameValidator(name):
+    if name=='':
+        messagebox.showinfo("Error","Name is blank")
+        return False
+    if name.find(' ') != -1:
+        messagebox.showinfo("Error","Can not contain space in name")
+        return False
+    regex=re.compile(constant.SPECIALCHARACTER)
+    if regex.search(name):
+        messagebox.showinfo("Error","Can not contain any special charectar")
+        return False
+    return True
+      

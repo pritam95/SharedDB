@@ -5,9 +5,7 @@ def getTimestamp(dtObject,timeZone):
 
 def getDate():
     now=datetime.datetime.now()
-    print (str(now))
     unixTstamp=getTimestamp(now,"utc")
-    print (str(unixTstamp))
     return (str(unixTstamp))
 
 def getLowDate():
