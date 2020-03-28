@@ -1,16 +1,18 @@
 import os
+import sys
 import constant
 from tkinter import messagebox
 import dbModule as dB
 import timeModule as tM
 import datetime
+import utility.common as common
 
 def findScripts():
     scriptNames=[]
     exceptionCheck=0
     try:
         for script in os.listdir(constant.PATH):
-            if script.endswith(".txt"):
+            if script.endswith(".py"):
                 scriptNames.append(script)
     except Exception as e:
         exceptionCheck=1
@@ -44,13 +46,12 @@ def sortScriptsWithTime(scriptNames):
     print("After sorting the order is:"+str(scriptNames))
     return scriptNames
 
-def insertScriptsForUp(allScripts):
+def insertScriptsForUp(script):
     tuple=[]
     now=datetime.datetime.now()
     lowDate=tM.getLowDate()
-    for script in allScripts:
-        objTuple=(script,1,now,0,lowDate)
-        tuple.append(objTuple)
+    objTuple=(script,1,now,0,lowDate)
+    tuple.append(objTuple)
     try:
         dB.insertScript(tuple)
     except Exception as e:
@@ -73,13 +74,25 @@ def runScripts(scriptsFromPath,scriptsFromDB):
         if file not in scriptsFromDB:
             filterdlist.append(file)
     print("Not In DB: "+str(filterdlist))
-    insertScriptsForUp(filterdlist)
+    if constant.PATH not in sys.path:
+        sys.path.append(constant.PATH)     #inserting path of the scripts on run time
+    for script in filterdlist:
+        query=common.getSqlFromModule(script)
+        print ("The query fetched from script is :"+str(query))
+        try:
+            dB.runQuery(query)
+        except Exception as e:
+            messagebox.showinfo("Error","Script has some problem :"+str(script))
+            print("stoping executing next script")
+            return
+        print("Script executed succesfully :"+str(script))
+        insertScriptsForUp(script)
 
 def createScript(fileName):
     rootPath=os.path.dirname(os.path.realpath(__file__))
     templatePath=os.path.join(rootPath,"internal_files")    
     tStamp=tM.getDate()
-    fileName=fileName+"_"+tStamp+".txt"
+    fileName=fileName+"_"+tStamp+".py"
     fp=None
     fp1=None
     try:
