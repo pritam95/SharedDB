@@ -33,20 +33,22 @@ def getAllScriptsFromDBForUp():
             closeConnection(cursor,connection)
     return allScripts
 
+def runQuery(query):
+    try:
+        connection = mysql.connector.connect(host=constant.HOST,database=constant.DATABASE,user=constant.USER,password=constant.PASSWORD)
+        cursor = connection.cursor()
+        cursor.execute(query)
+        connection.commit()
+    except Exception as e:
+        print("Something is Wrong IN Query :"+str(e))
+        raise
+    finally:
+        if (connection is not None and connection.is_connected()):
+            closeConnection(cursor,connection)    
+
 def closeConnection(cursor,connection):
     cursor.close()
     connection.close()
     print("MySQL connection is closed")
 
-def createDictionary(cursor):
-    list=[]
-    columnNames=cursor.column_names
-    noOfCol=len(columnNames)
-    print("-----------------------")
-    #print(cursor.fetchall())
-    for result in cursor.fetchall():
-        dict={}
-        for i in range(0,noOfCol,1):
-            dict[columnNames[i]]=result[i]
-        list.append(dict)
-    print(list)    
+   
