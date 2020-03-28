@@ -1,14 +1,19 @@
 import os
 from tkinter import messagebox
 import subEventModule as subEvt
+import utility.common as common
 
 def createScript(fileName):
     print("Inside:"+__name__)
     tempName=fileName.get()
-    if tempName.find(' ') != -1:
-        messagebox.showinfo("Error","Can not contain space in name")
+    response=common.nameValidator(tempName)
+    if response==False:
         return
-    subEvt.createScript(tempName)
+    try:   
+        subEvt.createScript(tempName)
+    except Exception as e:
+        return
+    fileName.set("")
 
 def runUpward(fileName):
     scriptNames=[]

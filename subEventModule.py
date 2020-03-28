@@ -103,6 +103,7 @@ def createScript(fileName):
         fp.write(content)
     except Exception as e:
         messagebox.showinfo("Error","Can not create file on specific path: "+str(e))
+        raise
     finally:
         if fp1 is not None:
             fp1.close()

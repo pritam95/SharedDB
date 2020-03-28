@@ -9,7 +9,6 @@ def rootUi(mainWindow):
     createLabel(mainWindow,"Enter File Name:")
     createEntry(mainWindow,fileName)
 
-
 def createButton(mainWindow,purpose,fileName,action):
     newButton=tk.Button(mainWindow,text=purpose,command=lambda:action(fileName))
     newButton.pack()
