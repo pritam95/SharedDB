@@ -6,4 +6,4 @@ USER="root"
 PASSWORD="password"
 DATABASE="SharedDB"
 
-SPECIALCHARACTER="""[!@#$%^&*(){}[\],.?"':|<>]"""
+SPECIALCHARACTER="""[!@#$%^&*_(){}[\],.?"':|<>]"""

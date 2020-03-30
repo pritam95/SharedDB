@@ -1,11 +1,12 @@
 import os
 import sys
-import constant
+import utility.constant as constant
 from tkinter import messagebox
-import dbModule as dB
-import timeModule as tM
+import other_modules.dbModule as dB
+import utility.timeModule as tM
 import datetime
 import utility.common as common
+import config
 
 def findScripts():
     scriptNames=[]
@@ -83,14 +84,16 @@ def runScripts(scriptsFromPath,scriptsFromDB):
             dB.runQuery(query)
         except Exception as e:
             messagebox.showinfo("Error","Script has some problem :"+str(script))
-            print("stoping executing next script")
+            print("Stoping executing next script")
             return
         print("Script executed succesfully :"+str(script))
         insertScriptsForUp(script)
 
 def createScript(fileName):
-    rootPath=os.path.dirname(os.path.realpath(__file__))
-    templatePath=os.path.join(rootPath,"internal_files")    
+    rootPath=config.getRootPath()
+    print(rootPath)
+    templatePath=os.path.join(rootPath,"internal_files")
+    print(templatePath)    
     tStamp=tM.getDate()
     fileName=fileName+"_"+tStamp+".py"
     fp=None

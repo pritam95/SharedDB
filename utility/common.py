@@ -3,10 +3,10 @@ import importlib
 import sys
 from tkinter import messagebox
 import re
-import constant
+import utility.constant as constant
 
 def getSqlFromModule(script):
-    moduleName=os.path.splitext(script)[0]
+    moduleName=os.path.splitext(script)[0]             #omiting the extension of a file name
     print ("Module to be imported: "+str(moduleName))
     mod=importlib.import_module(moduleName)
     query=mod.up()

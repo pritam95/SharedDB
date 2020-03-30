@@ -1,5 +1,5 @@
 import mysql.connector
-import constant
+import utility.constant as constant
 
 def insertScript(tuple):
     connection=None
