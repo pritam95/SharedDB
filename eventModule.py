@@ -1,6 +1,5 @@
-import os
 from tkinter import messagebox
-import subEventModule as subEvt
+import other_modules.subEventModule as subEvt
 import utility.common as common
 
 def createScript(fileName):
@@ -29,11 +28,11 @@ def runUpward(fileName):
             messagebox.showinfo("Error","runUpward Method:something is worng: "+str(e))
             return
     else:
-        messagebox.showinfo("Error","no scripts found on the specific directory,please check")
+        messagebox.showinfo("Error","No scripts found on the specific directory,please check")
         return
     try:
         scriptsFromDb=subEvt.getAllScriptsForUp()
-        print("All scripts from Database till executed are: "+str(scriptsFromDb))
+        print("All scripts from Database till executed in upward mode are: "+str(scriptsFromDb))
         if(len(scriptsFromDb)>0):
             scriptsFromDb=subEvt.sortScriptsWithTime(scriptsFromDb)
         subEvt.runScripts(scriptNames,scriptsFromDb)        
