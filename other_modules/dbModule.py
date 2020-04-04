@@ -11,7 +11,7 @@ def insertScript(tuple):
         connection.commit()
         print("From "+__name__+": inserScript method insertd succesfully")
     except Exception as e:
-        print("Something is Wrong IN inserScript :"+str(e))
+        print("Something is wrong :"+str(e))
         raise
     finally:
         if (connection is not None and connection.is_connected()):
@@ -19,14 +19,15 @@ def insertScript(tuple):
 
 def getAllScriptsFromDBForUp():
     allScripts=[]
+    connection=None
     try:
         connection = mysql.connector.connect(host=constant.HOST,database=constant.DATABASE,user=constant.USER,password=constant.PASSWORD)
-        cursor = connection.cursor(dictionary=True) #this will return MySQLCursorPrepared object
+        cursor = connection.cursor(dictionary=True) 
         query = "SELECT * FROM db_control d WHERE d.run_up_flag=1"
         cursor.execute(query)
         allScripts=cursor.fetchall()
     except Exception as e:
-        print("Something is Wrong IN inserScript :"+str(e))
+        print("Something is wrong  :"+str(e))
         raise
     finally:
         if (connection is not None and connection.is_connected()):
@@ -34,17 +35,57 @@ def getAllScriptsFromDBForUp():
     return allScripts
 
 def runQuery(query):
+    connection=None
     try:
         connection = mysql.connector.connect(host=constant.HOST,database=constant.DATABASE,user=constant.USER,password=constant.PASSWORD)
         cursor = connection.cursor()
         cursor.execute(query)
         connection.commit()
     except Exception as e:
-        print("Something is Wrong IN Query :"+str(e))
+        print("Something is Wrong :"+str(e))
         raise
     finally:
         if (connection is not None and connection.is_connected()):
             closeConnection(cursor,connection)    
+
+def checkDBSetup():
+    allTables=[]
+    connection=None
+    try:
+        connection = mysql.connector.connect(host=constant.HOST,database=constant.DATABASE,user=constant.USER,password=constant.PASSWORD)
+        cursor = connection.cursor(dictionary=True) 
+        query = "SHOW TABLES"
+        cursor.execute(query)
+        allTables=cursor.fetchall()
+    except Exception as e:
+        print("Something is wrong :"+str(e))
+        raise
+    finally:
+        if (connection is not None and connection.is_connected()):
+            closeConnection(cursor,connection)
+    return allTables
+
+def createInternalDB():
+    connection=None
+    try:
+        connection = mysql.connector.connect(host=constant.HOST,database=constant.DATABASE,user=constant.USER,password=constant.PASSWORD)
+        cursor = connection.cursor()
+        query="""CREATE TABLE db_control(
+            id INT(11) AUTO_INCREMENT PRIMARY KEY,
+            script_name VARCHAR(128) NOT NULL,
+            run_up_flag INT(1) NOT NULL,
+            up_runtime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            run_down_flag INT(1) NOT NULL,
+            down_runtime TIMESTAMP DEFAULT CURRENT_TIMESTAMP)"""
+        cursor.execute(query)
+        connection.commit()
+    except Exception as e:
+        print("Something is wrong  :"+str(e))
+        raise
+    finally:
+        if (connection is not None and connection.is_connected()):
+            closeConnection(cursor,connection)    
+
 
 def closeConnection(cursor,connection):
     cursor.close()

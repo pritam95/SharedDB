@@ -4,8 +4,9 @@ import eventModule as evnt
 def rootUi(mainWindow):
     print ("Inside:"+__name__)
     fileName=tk.StringVar()
+    createButton(mainWindow,"Setup",fileName,evnt.setUp)
     createButton(mainWindow,"Create Script",fileName,evnt.createScript)
-    createButton(mainWindow,"Run Upwards",fileName,evnt.runUpward)
+    createButton(mainWindow,"Run Upward",fileName,evnt.runUpward)
     createLabel(mainWindow,"Enter File Name:")
     createEntry(mainWindow,fileName)
 
