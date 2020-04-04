@@ -21,7 +21,6 @@ def findScripts():
         raise
     if len(scriptNames)==0 and exceptionCheck==0:
         messagebox.showinfo("Error","No scripts with proper extension found on the PATH:"+constant.PATH)
-    print ("Files with proper extensions:"+str(scriptNames))
     return scriptNames
 
 def sortScriptsWithTime(scriptNames):
@@ -44,7 +43,6 @@ def sortScriptsWithTime(scriptNames):
     except Exception as e:
         print("Exception Occured: "+str(e))
         raise
-    print("After sorting the order is:"+str(scriptNames))
     return scriptNames
 
 def insertScriptsForUp(script):
@@ -79,7 +77,7 @@ def runScripts(scriptsFromPath,scriptsFromDB):
         sys.path.append(constant.PATH)     #inserting path of the scripts on run time
     for script in filterdlist:
         query=common.getSqlFromModule(script)
-        print ("The query fetched from script is :"+str(query))
+        print ("The query fetched from "+str(script)+" is :"+str(query))
         try:
             dB.runQuery(query)
         except Exception as e:
@@ -113,6 +111,34 @@ def createScript(fileName):
         if fp is not None:
             fp.close()    
 
+def checkSetup():
+    res=os.path.exists(constant.PATH)
+    if res==True:
+        print("Scipt creation directory exists")
+    else:
+        print("Scipt creation directory does not exists")
+    try:
+        allTables=dB.checkDBSetup()
+    except Exception as e:
+        print("Some problem occured during database checkup")
+        raise
+    dbFlag=0
+    for row in allTables:
+        for key in row:
+            if row[key]==constant.INTERNALDB:
+                dbFlag=1
+                print("Database already exist")
+        if dbFlag>0:
+            break
+    if dbFlag==0:
+        try:
+            dB.createInternalDB()
+            print("Database setup completed")
+        except Exception as e:
+            print("Some problem occured during setup database creation")
+            raise
+                
+        
 
 
 

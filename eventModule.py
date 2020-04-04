@@ -32,11 +32,16 @@ def runUpward(fileName):
         return
     try:
         scriptsFromDb=subEvt.getAllScriptsForUp()
-        print("All scripts from Database till executed in upward mode are: "+str(scriptsFromDb))
         if(len(scriptsFromDb)>0):
             scriptsFromDb=subEvt.sortScriptsWithTime(scriptsFromDb)
         subEvt.runScripts(scriptNames,scriptsFromDb)        
     except Exception as e:
-            messagebox.showinfo("Error","runUpward Method:something is worng: "+str(e))
+            messagebox.showinfo("Error","runUpward Method something is worng: "+str(e))
             return
+
+def setUp(fileName):
+    try:
+        subEvt.checkSetup()
+    except Exception as e:
+        return
 
