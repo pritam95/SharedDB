@@ -62,7 +62,7 @@ def checkDBSetup():
         raise
     finally:
         if (connection is not None and connection.is_connected()):
-            cursor.close()
+            closeConnection(cursor,connection)
     return allTables
 
 def createInternalDB():
