@@ -1,21 +1,21 @@
 import mysql.connector
 import utility.constant as constant
 
-def insertScript(tuple):
+def insertScript(dbInput):
     connection=None
+    connection=dbInput['connection']
+    tuple=dbInput['obj']
     try:
-        connection = mysql.connector.connect(host=constant.HOST,database=constant.DATABASE,user=constant.USER,password=constant.PASSWORD)
         cursor = connection.cursor(prepared=True) #this will return MySQLCursorPrepared object
         query = "INSERT INTO db_control (script_name,run_up_flag,up_runtime,run_down_flag,down_runtime) VALUES (%s,%s,%s,%s,%s)"
         cursor.executemany(query, tuple)
-        connection.commit()
         print("From "+__name__+": inserScript method insertd succesfully")
     except Exception as e:
         print("Something is wrong :"+str(e))
         raise
     finally:
         if (connection is not None and connection.is_connected()):
-            closeConnection(cursor,connection)
+            cursor.close()
 
 def getAllScriptsFromDBForUp():
     allScripts=[]
@@ -34,19 +34,19 @@ def getAllScriptsFromDBForUp():
             closeConnection(cursor,connection)
     return allScripts
 
-def runQuery(query):
+def runQuery(dbInput):
     connection=None
+    connection=dbInput['connection']
+    query=dbInput['obj']
     try:
-        connection = mysql.connector.connect(host=constant.HOST,database=constant.DATABASE,user=constant.USER,password=constant.PASSWORD)
         cursor = connection.cursor()
         cursor.execute(query)
-        connection.commit()
     except Exception as e:
         print("Something is Wrong :"+str(e))
         raise
     finally:
         if (connection is not None and connection.is_connected()):
-            closeConnection(cursor,connection)    
+            cursor.close()    
 
 def checkDBSetup():
     allTables=[]
@@ -62,7 +62,7 @@ def checkDBSetup():
         raise
     finally:
         if (connection is not None and connection.is_connected()):
-            closeConnection(cursor,connection)
+            cursor.close()
     return allTables
 
 def createInternalDB():
@@ -86,7 +86,20 @@ def createInternalDB():
         if (connection is not None and connection.is_connected()):
             closeConnection(cursor,connection)    
 
+def openConnection():
+    connection=None
+    try:
+        connection=mysql.connector.connect(host=constant.HOST,database=constant.DATABASE,user=constant.USER,password=constant.PASSWORD)
+        return connection
+    except Exception as e:
+        print("Can not open DB connection")
+        raise e
 
+def commitAndCloseConnection(connection):
+    if (connection is not None and connection.is_connected()):
+        connection.commit()
+        connection.close()
+        print("MySQL connection commited and closed")
 def closeConnection(cursor,connection):
     cursor.close()
     connection.close()
