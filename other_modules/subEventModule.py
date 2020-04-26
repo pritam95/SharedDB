@@ -45,14 +45,17 @@ def sortScriptsWithTime(scriptNames):
         raise
     return scriptNames
 
-def insertScriptsForUp(script):
+def insertScriptsForUp(connection,script):
     tuple=[]
     now=datetime.datetime.now()
     lowDate=tM.getLowDate()
     objTuple=(script,1,now,0,lowDate)
     tuple.append(objTuple)
+    dbInput={}
+    dbInput['connection']=connection
+    dbInput['obj']=tuple
     try:
-        dB.insertScript(tuple)
+        dB.insertScript(dbInput)
     except Exception as e:
         raise
 
@@ -76,16 +79,21 @@ def runScripts(scriptsFromPath,scriptsFromDB):
     if constant.PATH not in sys.path:
         sys.path.append(constant.PATH)     #inserting path of the scripts on run time
     for script in filterdlist:
+        connection=dB.openConnection()
+        dbInput={}
+        dbInput['connection']=connection
         query=common.getSqlFromModule(script)
         print ("The query fetched from "+str(script)+" is :"+str(query))
         try:
-            dB.runQuery(query)
+            dbInput['obj']=query
+            dB.runQuery(dbInput)
         except Exception as e:
             messagebox.showinfo("Error","Script has some problem :"+str(script))
             print("Stoping executing next script")
             return
         print("Script executed succesfully :"+str(script))
-        insertScriptsForUp(script)
+        insertScriptsForUp(connection,script)
+        dB.commitAndCloseConnection(connection)
 
 def createScript(fileName):
     rootPath=config.getRootPath()
