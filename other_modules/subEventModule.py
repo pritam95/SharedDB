@@ -7,6 +7,7 @@ import utility.timeModule as tM
 import datetime
 import utility.common as common
 import config
+import uiModule as ui
 
 def findScripts():
     scriptNames=[]
@@ -84,16 +85,19 @@ def runScripts(scriptsFromPath,scriptsFromDB):
         dbInput['connection']=connection
         query=common.getSqlFromModule(script)
         print ("The query fetched from "+str(script)+" is :"+str(query))
+        ui.RootUi.printStatus("The query fetched from "+str(script)+" is :"+str(query))
         try:
             dbInput['obj']=query
             dB.runQuery(dbInput)
         except Exception as e:
             messagebox.showinfo("Error","Script has some problem :"+str(script))
-            print("Stoping executing next script")
-            return
+            print("Stoping executing scripts.....")
+            ui.RootUi.printStatus("Stoping executing scripts....")
+            raise
         print("Script executed succesfully :"+str(script))
         insertScriptsForUp(connection,script)
         dB.commitAndCloseConnection(connection)
+        ui.RootUi.printStatus("Script executed succesfully :"+str(script))
 
 def createScript(fileName):
     rootPath=config.getRootPath()
@@ -108,8 +112,9 @@ def createScript(fileName):
         fp1=open((os.path.join(templatePath,constant.TEMPLATE)),'r')
         content=fp1.read()
         fp=open((os.path.join(constant.PATH,fileName)),'a+')
-        print("File Created With Name : "+fileName)
         fp.write(content)
+        print("File Created With Name : "+fileName)
+        ui.RootUi.printStatus("File Created With Name : "+fileName)
     except Exception as e:
         messagebox.showinfo("Error","Can not create file on specific path: "+str(e))
         raise
@@ -123,11 +128,14 @@ def checkSetup():
     res=os.path.exists(constant.PATH)
     if res==True:
         print("Scipt creation directory exists")
+        ui.RootUi.printStatus("Scipt creation directory exists")
     else:
         print("Scipt creation directory does not exists")
+        ui.RootUi.printStatus("Scipt creation directory does not exists")
     try:
         allTables=dB.checkDBSetup()
     except Exception as e:
+        ui.RootUi.printStatus("Some problem occured during database checkup")
         print("Some problem occured during database checkup")
         raise
     dbFlag=0
@@ -136,13 +144,16 @@ def checkSetup():
             if row[key]==constant.INTERNALDB:
                 dbFlag=1
                 print("Database already exist")
+                ui.RootUi.printStatus("Database already exist")
         if dbFlag>0:
             break
     if dbFlag==0:
         try:
             dB.createInternalDB()
+            ui.RootUi.printStatus("Database setup completed")
             print("Database setup completed")
         except Exception as e:
+            ui.RootUi.printStatus("Some problem occured during setup database creation")
             print("Some problem occured during setup database creation")
             raise
                 
