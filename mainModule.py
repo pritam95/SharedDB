@@ -5,5 +5,5 @@ if __name__ == '__main__':
     rootWindow=tk.Tk()
     print ("Root Window Created:"+__name__)
     rootWindow.title("SharedDB")
-    ui.rootUi(rootWindow)
+    a=ui.RootUi(rootWindow)
     rootWindow.mainloop()
