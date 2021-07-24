@@ -20,7 +20,7 @@ response=$?
 if [ $response -eq $ans ]
 then
     echo "pip3 recognized"
-    pip3 install mysql-connector
+    pip3 install mysql-connector-python
 else
     echo "pip3 not recognized"
 fi
