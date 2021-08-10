@@ -40,7 +40,8 @@ def runQuery(dbInput):
     query=dbInput['obj']
     try:
         cursor = connection.cursor()
-        cursor.execute(query)
+        for mlt in cursor.execute(query,multi=True):
+            pass
     except Exception as e:
         print("Something is Wrong :"+str(e))
         raise
